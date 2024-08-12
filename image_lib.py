@@ -1,21 +1,13 @@
 '''
-Authors: Mahenur Master, Nisharg Patel, Sneha Malhotra , Siddharth Patel
 Library of useful functions for working with images.
 '''
 
 import requests
 import ctypes
-import os
-from ctypes import wintypes
 
 def main():
-    # Test the functions in this module
-    test_image_url = "https://apod.nasa.gov/apod/image/2205/NGC3521LRGBHaAPOD-20.jpg"
-    image_data = download_image(test_image_url)
-    if image_data:
-        image_path = os.path.join(os.getcwd(), "test_image.jpg")
-        if save_image_file(image_data, image_path):
-            set_desktop_background_image(image_path)
+    # TODO: Add code to test the functions in this module
+    return
 
 def download_image(image_url):
     """Downloads an image from a specified URL.
@@ -26,17 +18,21 @@ def download_image(image_url):
         image_url (str): URL of image
 
     Returns:
-        bytes: Binary image data, if successful. None, if unsuccessful.
+        bytes: Binary image data, if succcessful. None, if unsuccessful.
     """
-    try:
-        print(f"Downloading image from {image_url}...")
-        response = requests.get(image_url)
-        response.raise_for_status()
-        print("Download successful.")
-        return response.content
-    except requests.exceptions.RequestException as e:
-        print(f"Error downloading image: {e}")
-        return None
+    # TODO: Complete function body
+    # Send GET request to download the image
+    print(f'{image_url}...', end='')
+    resp_msg = requests.get(image_url)
+
+    # Check if the image was retrieved successfully
+    if resp_msg.status_code == requests.codes.ok:
+        print('success')
+        return resp_msg.content
+    else:
+        print('failure')
+        print(f'Response code: {resp_msg.status_code} ({resp_msg.reason})')     
+    return
 
 def save_image_file(image_data, image_path):
     """Saves image data as a file on disk.
@@ -48,17 +44,19 @@ def save_image_file(image_data, image_path):
         image_path (str): Path to save image file
 
     Returns:
-        bool: True, if successful. False, if unsuccessful
+        bool: True, if succcessful. False, if unsuccessful
     """
+    # TODO: Complete function body
     try:
-        os.makedirs(os.path.dirname(image_path), exist_ok=True)
+        print(f"Saving image file as {image_path}...", end='')
         with open(image_path, 'wb') as file:
             file.write(image_data)
-        print(f"Image saved to {image_path}.")
+        print("success")
         return True
-    except Exception as e:
-        print(f"Error saving image: {e}")
+    except:
+        print("failure")
         return False
+    return
 
 def set_desktop_background_image(image_path):
     """Sets the desktop background image to a specific image.
@@ -67,23 +65,20 @@ def set_desktop_background_image(image_path):
         image_path (str): Path of image file
 
     Returns:
-        bool: True, if successful. False, if unsuccessful        
+        bytes: True, if succcessful. False, if unsuccessful        
     """
+    # TODO: Complete function body
+    print(f"Setting desktop to {image_path}...", end='')
+    SPI_SETDESKWALLPAPER = 20
     try:
-        print(f"Setting desktop background to {image_path}...")
-        SPI_SETDESKWALLPAPER = 20
-        result = ctypes.windll.user32.SystemParametersInfoW(
-            SPI_SETDESKWALLPAPER, 0, image_path, 3
-        )
-        if result:
-            print("Desktop background set successfully.")
+        if ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, image_path, 3):
+            print("success")
             return True
         else:
-            print("Failed to set desktop background.")
-            return False
-    except Exception as e:
-        print(f"Error setting desktop background: {e}")
-        return False
+            print("failure")
+    except:
+        print("failure")
+    return False
 
 def scale_image(image_size, max_size=(800, 600)):
     """Calculates the dimensions of an image scaled to a maximum width
